@@ -1,1 +1,14 @@
-[]
+[
+    {
+        "task": "Coding",
+        "done": true
+    },
+    {
+        "task": "eating",
+        "done": true
+    },
+    {
+        "task": "sleeping",
+        "done": false
+    }
+]
