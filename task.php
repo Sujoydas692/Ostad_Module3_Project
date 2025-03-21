@@ -94,8 +94,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             cursor: pointer;
             text-transform: none;
         }
-        .complete {
-            font-size: 1.3rem;
+
+        .checkbox-container {
+            display: flex;
+            cursor: pointer;
+            flex-grow: 1;
+        }
+
+        .checkmark {
+            width: 20px;
+            height: 20px;
+            background-color: #eee;
+            border: 2px solid #9b4dca;
+            border-radius: 4px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checkbox-container input {
+            display: none;
+        }
+
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: #9b4dca;
+        }
+
+        .checkmark::after {
+            content: "✔";
+            color: white;
+            font-size: 14px;
+            display: none;
+        }
+
+        .checkbox-container input:checked ~ .checkmark::after {
+            display: block;
+        }
+        .task-text {
+            letter-spacing: .1rem;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -128,14 +166,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <li class="task-item">
                             <form method="POST">
                                 <input type="hidden" name="toggle" value="<?= $index ?>">
-                                <button type="submit" style="border: none; background: none; cursor: pointer; text-align: left; width: 100%;">
-                                <?php if ($task['done']): ?>
-                                    <span class="complete">✅</span>
-                                <?php endif; ?>
-                                    <span class="task <?= $task['done'] ? 'task-done' : '' ?>">
+
+                                <label class="checkbox-container">
+                                    <input
+                                        type="checkbox"
+                                        <?= $task['done'] ? 'checked' : '' ?>
+                                        onchange="this.form.submit()"
+                                    >
+                                    <span class="checkmark"></span>
+                                    <span class="task-text task <?= $task['done'] ? 'task-done' : '' ?>">
                                         <?= ucwords($task['task']) ?>
                                     </span>
-                                </button>
+                                </label>
+
                             </form>
 
                             <form method="POST">
