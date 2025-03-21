@@ -118,7 +118,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .checkbox-container input:checked ~ .checkmark {
-            background-color: #9b4dca;
+            background-color: #888;
+            border: 2px solid #888;
         }
 
         .checkmark::after {
