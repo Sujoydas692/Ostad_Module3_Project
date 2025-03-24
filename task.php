@@ -43,6 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         saveTasks($tasks);
         header('Location:' . $_SERVER['PHP_SELF']);
         exit;
+    } elseif (isset($_POST['update'])) {
+        $tasks[$_POST['update']]['task'] = htmlspecialchars(trim($_POST['updated_task']));
+        saveTasks($tasks);
+        header('Location:' . $_SERVER['PHP_SELF']);
+        exit;
     }
 }
 
@@ -117,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: none;
         }
 
-        .checkbox-container input:checked ~ .checkmark {
+        .checkbox-container input:checked~.checkmark {
             background-color: #888;
             border: 2px solid #888;
         }
@@ -129,12 +134,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: none;
         }
 
-        .checkbox-container input:checked ~ .checkmark::after {
+        .checkbox-container input:checked~.checkmark::after {
             display: block;
         }
+
         .task-text {
             letter-spacing: .1rem;
             cursor: pointer;
+        }
+
+        .edit-form {
+            display: none;
+            margin-left: 10px;
+        }
+
+        .edit-form.active {
+            display: flex;
+            gap: 10px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-input {
+            flex-grow: 1;
+            margin: 0;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -172,8 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <input
                                         type="checkbox"
                                         <?= $task['done'] ? 'checked' : '' ?>
-                                        onchange="this.form.submit()"
-                                    >
+                                        onchange="this.form.submit()">
                                     <span class="checkmark"></span>
                                     <span class="task-text task <?= $task['done'] ? 'task-done' : '' ?>">
                                         <?= ucwords($task['task']) ?>
@@ -182,10 +212,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                             </form>
 
-                            <form method="POST">
-                                <input type="hidden" name="delete" value="<?= $index ?>">
-                                <button type="submit" class="button button-outline" style="margin-left: 10px;">Delete</button>
+                            <div class="actions">
+                                <button onclick="toggleEditForm(<?= $index ?>)" class="button button-outline" <?= $task['done'] ? 'disabled' : '' ?> >Edit</button>
+
+                                <form method="POST">
+                                    <input type="hidden" name="delete" value="<?= $index ?>">
+                                    <button type="submit" class="button button-outline" style="margin-left: 10px;">Delete</button>
+                                </form>
+                            </div>
+
+                            <!-- Edit Task Form -->
+                            <form method="POST" class="edit-form" id="edit-form-<?= $index ?>">
+                                <input type="hidden" name="update" value="<?= $index ?>">
+                                <input type="text" name="updated_task" value="<?= ucwords($task['task']) ?>" class="edit-input" required>
+                                <button type="submit" class="button button-primary">Update</button>
                             </form>
+
+
                         </li>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -194,6 +237,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         </div>
     </div>
+    <script>
+        function toggleEditForm(index) {
+            const editForm = document.getElementById(`edit-form-${index}`);
+            editForm.classList.toggle('active');
+        }
+    </script>
 </body>
 
 </html>
